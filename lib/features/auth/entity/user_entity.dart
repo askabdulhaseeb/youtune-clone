@@ -25,4 +25,9 @@ class UserEntity {
   final List<String> subscriptions;
   final int videos;
   final UserType type;
+
+  String get username1 => email.split('@').first;
+  bool canAccess() {
+    return type == UserType.admin || type == UserType.user;
+  }
 }

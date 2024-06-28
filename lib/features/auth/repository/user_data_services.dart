@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../entity/user_entity.dart';
 import '../model/user_model.dart';
 
 final Provider<UserDataServices> userDataServiceProvider =
@@ -30,5 +31,20 @@ class UserDataServices {
       return false;
     }
     return true;
+  }
+
+  Future<UserEntity?> user({String? userID}) async {
+    try {
+      final DocumentSnapshot<Map<String, dynamic>> doc = await db
+          .collection('users')
+          .doc(userID ?? auth.currentUser!.uid)
+          .get();
+      final UserEntity entity = UserModel.fromMap(doc);
+      print(entity.email);
+      return entity;
+    } catch (e) {
+      debugPrint('Error in getUser: $e');
+      return null;
+    }
   }
 }

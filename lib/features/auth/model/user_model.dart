@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../../cores/enums/user/user_type.dart';
 import '../entity/user_entity.dart';
 
@@ -30,19 +32,29 @@ class UserModel extends UserEntity {
     };
   }
 
+  Map<String, dynamic> toMapUpdate() {
+    return <String, dynamic>{
+      'displayName': displayName,
+      'photoURL': photoURL,
+      'phoneNumber': phoneNumber,
+      'description': description,
+    };
+  }
+
+
   // ignore: sort_constructors_first
-  factory UserModel.fromMap(Map<String, dynamic> map) {
+  factory UserModel.fromMap(DocumentSnapshot<Map<String, dynamic>> doc) {
     return UserModel(
-      uid: map['uid'] ?? '',
-      username: map['username'] ?? '',
-      displayName: map['displayName'] ?? '',
-      email: map['email'] ?? '',
-      photoURL: map['photoURL'] ?? '',
-      phoneNumber: map['phoneNumber'] ?? '',
-      description: map['description'] ?? '',
-      subscriptions: List<String>.from(map['subscriptions']),
-      videos: map['videos'] ?? 0,
-      type: UserType.fromMap(map['type']),
+      uid: doc.data()?['uid'] ?? '',
+      username: doc.data()?['username'] ?? '',
+      displayName: doc.data()?['displayName'] ?? '',
+      email: doc.data()?['email'] ?? '',
+      photoURL: doc.data()?['photoURL'] ?? '',
+      phoneNumber: doc.data()?['phoneNumber'] ?? '',
+      description: doc.data()?['description'] ?? '',
+      subscriptions: List<String>.from(doc.data()?['subscriptions']),
+      videos: doc.data()?['videos'] ?? 0,
+      type: UserType.fromMap(doc.data()?['type']),
     );
   }
 }

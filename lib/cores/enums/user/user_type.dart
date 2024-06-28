@@ -6,9 +6,10 @@ enum UserType {
   final String json;
   final String display;
 
-  static UserType fromMap(Map<String, dynamic> map) {
+  static UserType fromMap(String? value) {
+    if (value == null) return UserType.user;
     return UserType.values.firstWhere(
-      (UserType e) => e.json == map['json'],
+      (UserType e) => e.json == value,
     );
   }
 }

@@ -5,8 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'cores/screens/error_page.dart';
 import 'cores/screens/loader.dart';
+import 'features/auth/entity/user_entity.dart';
 import 'features/auth/repository/auth_services.dart';
+import 'features/auth/repository/user_data_services.dart';
 import 'features/auth/screens/login_screen.dart';
+import 'features/home/home_page.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -35,14 +38,40 @@ class MyApp extends ConsumerWidget {
               return const ErrorPage();
             } else if (snapshot.hasData) {
               return Scaffold(
-                body: Center(
-                  child: GestureDetector(
-                    onTap: () async =>
-                        await ref.read(authServiceProvider).signOut(),
-                    child: const Text('Click here to Logout'),
-                  ),
+                body: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    FutureBuilder<UserEntity?>(
+                      future: ref.read(userDataServiceProvider).user(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<UserEntity?> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Loader();
+                        } else if (snapshot.hasError) {
+                          return const ErrorPage();
+                        } else if (snapshot.hasData) {
+                          return Text(
+                              'Welcome ${snapshot.data?.displayName ?? 'NULL'}');
+                        }
+                        return const SizedBox();
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    Center(
+                      child: GestureDetector(
+                        onTap: () async =>
+                            await ref.read(authServiceProvider).signOut(),
+                        child: const Text(
+                          'Click here to Logout',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               );
+              // return const HomeScreen();
             }
             return const LoginScreen();
           },
